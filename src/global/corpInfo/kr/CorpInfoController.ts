@@ -1,9 +1,6 @@
 import { Consumer } from "../../../models/rdbms/Consumer";
 import { Corporation } from "../../../models/rdbms/Corporation";
 
-import dotenv from "dotenv";
-dotenv.config({ path: "global/kr/.env.local" });
-
 const CORP_API_KEY = process.env.CORP_API_KEY;
 const CORP_API_BASE_URL = process.env.CORP_API_BASE_URL;
 const CORP_API_END_POINT = "getCorpOutline_V2";

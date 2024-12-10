@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { Request as RequestModel } from "../models/rdbms/Request";
+import { APISpec } from "api_spec";
 import {
     createRequest,
     getRequestByRequestId,
@@ -7,10 +7,12 @@ import {
 
 const RequestRouter = express.Router();
 
-RequestRouter.post("/", async (req: Request, res: Response) => {
+RequestRouter.post("/" satisfies keyof APISpec.RequestAPISpec, (async (
+    req,
+    res,
+) => {
     const user = res.session?.user ?? undefined;
 
-    const role = req.body.role;
     const data = req.body.data;
 
     if (user === undefined) {
@@ -32,26 +34,17 @@ RequestRouter.post("/", async (req: Request, res: Response) => {
             request_id: request_id,
         });
     }
-});
+}) as APISpec.RequestAPISpec["/"]["post"]["__handler"]);
 
 RequestRouter.get("/:request_id", async (req: Request, res: Response) => {
     const request_id = req.params.request_id;
     const user = res.session?.user ?? null;
     const roles: string[] = user?.roles ?? null;
     // TODO: response edit button for corporation
-    const ret = {
-        body: "",
-        stickybutton_type: "",
-    };
+
     const requestBody = await getRequestByRequestId(Number(request_id));
 
-    ret.body = requestBody?.get({ plain: true });
-
-    if (roles !== null && roles !== null && roles.includes("student")) {
-        ret.stickybutton_type = "register";
-    } else {
-        ret.stickybutton_type = "";
-    }
+    const ret = requestBody?.get({ plain: true });
 
     res.json(ret);
 });

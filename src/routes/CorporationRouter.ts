@@ -38,6 +38,10 @@ CorporationRouter.get("/corpProfile", async (req: Request, res: Response) => {
             Number(corpNum),
         );
 
+        if (externCorpProfile === undefined) {
+            res.json({ status: "Extern API error", profile: undefined });
+        }
+
         res.json({ status: "not exist", profile: externCorpProfile });
     } else {
         res.json({ status: "exist", profile: storedCorpProfile });

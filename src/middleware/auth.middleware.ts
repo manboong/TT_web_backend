@@ -1,7 +1,8 @@
 import { getSession } from "@auth/express";
 import { authConfig } from "../config/auth.config.js";
 import type { NextFunction, Request, Response } from "express";
-import getToken from "@auth/core";
+import logger from "../utils/logger.js";
+
 export const authenticateUser = async (
     req: Request,
     res: Response,
@@ -28,7 +29,6 @@ export const currentSession = async (
 
     // encode JSON.stringfied Buffer to Buffer
     // https://stackoverflow.com/questions/34557889/how-to-deserialize-a-nested-buffer-using-json-parse
-    console.log("currentSEssion", session);
     if (
         session !== undefined &&
         session.user !== undefined &&

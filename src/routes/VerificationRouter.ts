@@ -1,10 +1,7 @@
 import { createTransport } from "nodemailer";
 import express, { Request, Response } from "express";
 import { models } from "../models/rdbms";
-import { connUserWithCorpProfile } from "../global/corpInfo/kr/CorpInfoController";
-import dotenv from "dotenv";
-
-dotenv.config({ path: ".env.local" });
+import logger from "../utils/logger";
 
 const server = {
     host: process.env.EMAIL_SERVER_HOST,
@@ -85,11 +82,12 @@ VerificationRouter.post("/callback/identity-verify", async (req, res, next) => {
             phone_number: "",
         });
     }
-    console.log("Verification", userInstance);
+    logger.debug(`User email Verified through email: ${userInstance}`);
     if (userInstance.roles === null) {
         userInstance.roles = [type];
     } else {
-        userInstance.roles = [...userInstance.roles, type];
+        userInstance.roles = Array.from(new Set([userInstance.roles, type]));
+
     }
 
     await models.User.update(userInstance, { where: { email: user.email } });
@@ -118,8 +116,8 @@ VerificationRouter.post("/identity-verify", async (req, res, next) => {
     }
 
     // random string
+    // TODO: 숫자 영어 조합 6개
     const randomStr = crypto.randomUUID().split("-").at(0) as string;
-    console.log(randomStr);
 
     await models.VerificationToken.destroy({
         where: { identifier: user.email },
@@ -127,7 +125,7 @@ VerificationRouter.post("/identity-verify", async (req, res, next) => {
 
     const createdToken = await models.VerificationToken.create({
         identifier: verifyEmail,
-        token: randomStr,
+        token: token,
         expires: new Date(Date.now() + 3600 * 1000),
         token_type: type,
     });

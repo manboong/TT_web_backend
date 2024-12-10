@@ -71,5 +71,4 @@ export const chatTest = async () => {
     await chatUserController.delChatUserById(test1Chat._id);
 
     await ChatUser.deleteMany();
-    //console.log("get by seq", lastSeqMessage);
 };

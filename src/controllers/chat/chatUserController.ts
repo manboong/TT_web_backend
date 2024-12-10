@@ -7,7 +7,6 @@ const { ChatUser } = ChatModels;
 const { User } = RDBMSModels;
 
 export const createChatUser = async (user: UserAttributes) => {
-    console.log("Create", user);
     return await ChatUser.create({
         user_id: user.user_id,
         email: user.email,
@@ -37,7 +36,6 @@ export const getUsers = async (users: UserAttributes[]) => {
 
 export const getUsersByUUID = async (uuids: mongoose.Types.UUID[]) => {
     const ret = await ChatUser.find({ user_id: { $in: uuids } });
-    console.log("getUsersByUUID: ", uuids, ret);
 
     return ret;
 };

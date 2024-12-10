@@ -2,6 +2,8 @@ import { Router } from "express";
 import { createSession } from "better-sse";
 import { QueueEvents } from "bullmq";
 import { getUnreadCountOfUser } from "../../controllers/chat/chatUnreadController";
+import logger from "../../utils/logger";
+
 const sendSSEAlarm = new QueueEvents("sendAlarm");
 
 const SSEAlarmRouter = Router();
@@ -21,14 +23,14 @@ SSEAlarmRouter.get("/", async (req, res) => {
     session.push({ unreadTotalCount: ret });
 
     const callback = ({ jobId, returnvalue }) => {
-        console.log("sseEvent: ", session);
+        logger.debug(`sseEvent: ${session}`);
         session.push(returnvalue, "message");
     };
-    console.log("SSE connected: ", user.id.toString("hex"));
+    logger.debug(`SSE connected: ${user.id.toString("hex")}`);
     sendSSEAlarm.on(`${user.id.toString("hex")}`, callback);
 
     session.on("disconnected", () => {
-        console.log("SSE disconnected");
+        logger.debug("SSE disconnected");
         sendSSEAlarm.off(`${user.id.toString("hex")}`, callback);
     });
 });

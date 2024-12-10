@@ -1,12 +1,12 @@
 import mongoose, { Schema, Types } from "mongoose";
-import { IChatroom } from "../../types/chat/chatSchema.types";
 
-const chatRoomSchema = new Schema<IChatroom>(
+const chatRoomSchema = new Schema(
     {
         request_id: { type: Number, required: true },
         consumer_id: { type: Schema.Types.UUID, required: true },
         participant_ids: { type: [Types.UUID], required: true },
         message_seq: { type: Number, default: 0 },
+        title: { type: String, default: "" },
     },
     {
         collection: "chat_rooms",

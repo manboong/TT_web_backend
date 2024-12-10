@@ -2,6 +2,7 @@ import mongoose, { Types, HydratedDocument } from "mongoose";
 import * as ChatModels from "../../models/chat";
 import { IChatContent, IChatroom } from "../../types/chat/chatSchema.types";
 import { pushSendAlarm, pushUpdateChatRoom } from "./messageQueue";
+import logger from "../../utils/logger";
 const { Unread, ChatUser, ChatRoom } = ChatModels;
 
 export const updateUserUnreadByUUID = async (
@@ -74,20 +75,19 @@ export const whetherSendAlarm = async (
 ) => {
     participant_ids.map(async (uuid) => {
         const chatUser = await ChatUser.findOne({ user_id: uuid });
-        console.log("WhethersendAlarm", chatUser, " ", message);
-        console.log("WhethersendAlarm2", chatUsersIds);
+        logger.debug(`WhethersendAlarm: ${chatUser}:${message}`);
 
         if (chatUser !== null) {
             const isParticipated = chatUsersIds.find(
                 (userId) => userId === chatUser._id.toString(),
             );
 
-            console.log("push update chat room:", chatUser);
+            logger.debug(`push update chat room:, ${chatUser}`);
             if (isParticipated === undefined) {
                 pushUpdateChatRoom(chatRoom, message, chatUser);
             }
         } else {
-            console.log("push alarm");
+            logger.debug("push alarm");
             pushSendAlarm(chatRoom, message, uuid);
         }
     });

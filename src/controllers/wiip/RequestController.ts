@@ -2,6 +2,7 @@ import { models, sequelize } from "../../models/rdbms";
 import { MeiliSearch } from "meilisearch";
 import { Op } from "sequelize";
 import { DataTypes } from "sequelize";
+import logger from "../../utils/logger";
 
 const client = new MeiliSearch({
     host: "http://127.0.0.1:7700",
@@ -9,8 +10,8 @@ const client = new MeiliSearch({
 });
 
 const requestSearch = client.index("request");
-requestSearch.updateFilterableAttributes(["_geo"]);
-requestSearch.updateSortableAttributes(["_geo"]);
+// requestSearch.updateFilterableAttributes(["_geo"]);
+// requestSearch.updateSortableAttributes(["_geo"]);
 
 const StudentWithCurrentSchool = models.studentwithcurrentschool;
 const RequestModel = models.Request;
@@ -23,7 +24,6 @@ export const getRecommendedRequestByStudent = async (student_id: number) => {
         })
     )?.get({ plain: true });
 
-    console.log("Student", student);
     const coordi = JSON.parse(JSON.stringify(student?.coordinate)).coordinates;
 
     const searchRet = await requestSearch.search("", {
@@ -74,7 +74,7 @@ export const createRequest = async (
                 { transaction: t },
             );
 
-            console.log(createdRequest);
+            logger.info(`Request created: ${createRequest}`);
 
             const coordinate = JSON.parse(
                 JSON.stringify(createdRequest.dataValues.address_coordinate),
@@ -105,7 +105,7 @@ export const createRequest = async (
         return ret;
     } catch (error) {
         // transaction failed
-        console.log("Created Request Error: ", error);
+        logger.error(`Created Request Error: ${error}`);
         return undefined;
     }
 };

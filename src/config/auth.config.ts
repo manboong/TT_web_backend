@@ -3,9 +3,9 @@ import { skipCSRFCheck } from "@auth/core";
 import Google from "@auth/express/providers/google";
 import Nodemailer from "@auth/express/providers/nodemailer";
 import { Sequelize } from "sequelize";
-import dotenv from "dotenv";
 import SequelizeAdapter from "./auth.adapter-sequelize";
-dotenv.config({ path: ".env.local" });
+
+import logger from "../utils/logger";
 
 const sequelize = new Sequelize(
     process.env.MYSQL_DATABASE,
@@ -13,6 +13,7 @@ const sequelize = new Sequelize(
     process.env.MYSQL_PASSWORD,
     {
         dialect: "mysql",
+        logging: (msg) => logger.debug(msg),
     },
 );
 
@@ -26,7 +27,6 @@ import { createTransport } from "nodemailer";
 import Credentials from "@auth/core/providers/credentials";
 
 export async function customSendVerificationRequest(params) {
-    console.log(params);
     const { identifier, token, url, provider, theme } = params;
     const { host } = new URL(url);
     // NOTE: You are not required to use `nodemailer`, use whatever you want.
@@ -149,7 +149,7 @@ export const authConfig: ExpressAuthConfig = {
                 const userInstance = await adapter.getUserByEmail(
                     credentials.email,
                 );
-                console.log("User instance: ", userInstance);
+                logger.debug(`User credential authorization: ${userInstance}`);
                 return userInstance;
             },
         }),

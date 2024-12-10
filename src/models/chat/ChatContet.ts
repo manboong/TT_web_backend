@@ -1,7 +1,6 @@
 import mongoose, { Schema, Types } from "mongoose";
-import { IChatContent } from "../../types/chat/chatSchema.types";
 
-const chatContentSchema = new Schema<IChatContent>(
+const chatContentSchema = new Schema(
     {
         chatroom: { type: Schema.Types.ObjectId, required: true },
         seq: { type: Number, required: true, default: 0 },

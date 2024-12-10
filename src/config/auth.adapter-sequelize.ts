@@ -1,14 +1,8 @@
-import type {
-    Adapter,
-    AdapterUser,
-    AdapterAccount,
-    AdapterSession,
-    VerificationToken,
-} from "@auth/core/adapters";
-import { Sequelize, Model } from "sequelize";
+import type { Adapter } from "@auth/core/adapters";
+import { Sequelize } from "sequelize";
 import { models } from "../models/rdbms";
-import { VerificationTokenTypes } from "../models/roles/VerificationToken.types";
-import sequelize from "sequelize";
+
+import logger from "../utils/logger";
 
 export default function SequelizeAdapter(client: Sequelize): Adapter {
     const { User, Account, VerificationToken, Consumer } = models;
@@ -65,7 +59,7 @@ export default function SequelizeAdapter(client: Sequelize): Adapter {
                 });
                 return ret;
             } catch (e) {
-                console.log(e);
+                logger.error(e);
                 return null;
             }
         },
@@ -84,7 +78,6 @@ export default function SequelizeAdapter(client: Sequelize): Adapter {
         },
         async getUserByEmail(email) {
             await sync();
-            console.error(email);
 
             const userInstance = await User.findOne({
                 where: { email },

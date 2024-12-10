@@ -2,6 +2,7 @@ import mongoose, { Types } from "mongoose";
 import * as ChatModels from "../../models/chat";
 import type { UserAttributes } from "../../models/User";
 import { pushMessageQueue } from "./messageQueue";
+import logger from "../../utils/logger";
 
 const { ChatUser, ChatContent, ChatRoom } = ChatModels;
 
@@ -10,7 +11,9 @@ export const sendMessage = async (
     sender: mongoose.Types.ObjectId,
     message: string,
 ) => {
-    console.log("Send message", chatRoomId, sender, message);
+    logger.debug(
+        `Send message: ChatRoomId: ${chatRoomId}, Sender: ${sender}, Message: ${message}`,
+    );
 
     if (sender === null) {
         throw Error("User not exist in Mongodb");

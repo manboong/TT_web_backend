@@ -61,7 +61,7 @@ StudentReviewRouter.post("/", async (req: Request, res: Response) => {
 
         res.status(201).json({ success: true, review: createdReview });
     } catch (error) {
-        console.error("Error creating student review:", error);
+        console.error(`Error creating student review: Error: ${error}`);
         res.status(500).json({ error: "Failed to create student review" });
     }
 });

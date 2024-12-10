@@ -1,5 +1,4 @@
 import mongoose, { Schema, Types } from "mongoose";
-import { IUnread } from "../../types/chat/chatSchema.types";
 // Unread schema is for displaying status of chatroom and push alarm.
 // Ex) When user entered chatroom pages users will see last sent message and count of unread message
 // unread schema uses user_id && chatroom_id as indexes. Which means this schema is per (user and chatroom) not per message;
@@ -12,7 +11,7 @@ interface UnreadInfoPerChatroom {
     lastSentMsesageSender: String;
 }
 
-const unreadSchema = new Schema<IUnread>(
+const unreadSchema = new Schema(
     {
         chatroom: { type: Schema.Types.ObjectId, required: true },
         user_id: { type: Types.UUID, required: true },

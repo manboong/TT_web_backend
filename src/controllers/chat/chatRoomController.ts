@@ -16,7 +16,6 @@ export const createChatRoom = async (
         user_id: { $in: uuidList },
     });
     const chatConsumer = await ChatUser.findOne({ user_id: consumer.user_id });
-    console.log("Partipa", participants);
     const chatRoomInstance = await ChatRoom.create({
         request_id: request_id,
         consumer_id: chatConsumer.user_id,

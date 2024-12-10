@@ -1,7 +1,6 @@
 import mongoose, { Schema, Types } from "mongoose";
-import { IChatUser } from "../../types/chat/chatSchema.types";
 
-const chatUserSchema = new Schema<IChatUser>(
+const chatUserSchema = new Schema(
     {
         // Since the ObjectId(=_id) of MongoDB is not reliable
         // We will record user's id in userSchema

@@ -1,4 +1,4 @@
-import { ObjectId, Types } from "mongoose";
+import { Types } from "mongoose";
 
 export interface resMessage {
     _id: Types.ObjectId;
@@ -29,7 +29,7 @@ export interface ackLastSeqProps {
 }
 
 export interface resSomeoneSent {
-    id: ObjectId;
+    id: Types.ObjectId;
     lastReadSeq: number;
 }
 

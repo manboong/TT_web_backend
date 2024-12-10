@@ -1,14 +1,12 @@
 import * as ChatModels from "../../models/chat";
 import { Queue, Worker, QueueEventsProducer } from "bullmq";
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 import {
     IChatroom,
     IChatContent,
-    IUnread,
     IChatUser,
 } from "../../types/chat/chatSchema.types";
-dotenv.config({ path: ".env.local" });
+import logger from "../../utils/logger";
 
 const { ChatRoom, ChatContent } = ChatModels;
 
@@ -47,7 +45,7 @@ export const pushSendAlarm = async (
     message: IChatContent,
     userUUID: mongoose.Types.UUID,
 ) => {
-    console.log("push alaram", userUUID.toString("hex"));
+    logger.debug(`push alaram: ${userUUID.toString("hex")}`);
     sendAlarmProducer.publishEvent({
         eventName: userUUID.toString("hex"),
         jobId: "",
@@ -60,7 +58,7 @@ export const pushUpdateChatRoom = async (
     message: IChatContent,
     chatUser: IChatUser,
 ) => {
-    console.log("Update producer", chatRoom, chatUser._id.toString());
+    logger.debug(`Update producer ${chatRoom}, ${chatUser._id.toString()}`);
     updateChatRoomProducer.publishEvent({
         eventName: chatUser._id.toString(),
         jobId: "",
@@ -94,14 +92,13 @@ const userSentWorker = new Worker(
         if (!(data.sender.user_id instanceof Buffer)) {
             data.sender.user_id = Buffer.from(data.sender.user_id);
         }
-        console.log("Data", data);
+        logger.debug(`userSentWorker: ${data}`);
         const ret = await ChatContent.create({
             sender_id: data.sender.user_id,
             content: data.message,
             chatroom: chatRoom,
             seq: chatRoom?.message_seq,
         });
-        // console.log("Tojson ", JSON.stringify(ret.toJSON()));
         return JSON.stringify(ret.toJSON());
     },
     {
@@ -119,9 +116,9 @@ userSentWorker.on("completed", (job) => {
         jobId: job.id,
         returnvalue: job.returnvalue,
     });
-    console.log(`${job.id} has completed! ${job.name}`);
+    logger.debug(`${job.id} has completed! ${job.name}`);
 });
 
 userSentWorker.on("failed", (job, err) => {
-    console.log(`${job.id} has failed with ${err.message}`);
+    logger.debug(`${job.id} has failed with ${err.message}`);
 });

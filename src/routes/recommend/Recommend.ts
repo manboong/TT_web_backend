@@ -1,27 +1,36 @@
-import express, { Request, Response } from "express";
-import { getRecommendedStudentByRequest } from "../../controllers/wiip/StudentController";
 import { getRecommendedRequestByStudent } from "../../controllers/wiip/RequestController";
-
+import { getRecommendedStudentByRequest } from "../../controllers/wiip/StudentController";
+import express, { Request, Response } from "express";
+import { APISpec } from "api_spec";
+import logger from "../../utils/logger";
 const RecommendRouter = express.Router();
 
-RecommendRouter.post("/students", async (req: Request, res: Response) => {
-    const { request_id } = req.body;
+RecommendRouter.post(
+    "/students" satisfies keyof APISpec.RecommendAPISpec,
+    (async (req, res) => {
+        logger.info("recommend router of student");
 
-    const ret = await getRecommendedStudentByRequest(request_id);
+        const result = await getRecommendedStudentByRequest(
+            req.body.student_id,
+        );
 
-    res.json(ret);
-});
+        const ret = result.getOrNull();
 
-RecommendRouter.post("/requests", async (req: Request, res: Response) => {
-    if (req.body.student_id === undefined) {
-        res.json("");
-    }
-    const ret = await getRecommendedRequestByStudent(
-        Number(req.body.student_id),
-    );
+        res.json(ret);
+    }) as APISpec.RecommendAPISpec["/students"]["post"]["__handler"],
+);
 
-    console.log("ret:", ret);
-    res.json(ret);
-});
+RecommendRouter.post(
+    "/requests" satisfies keyof APISpec.RecommendAPISpec,
+    (async (req, res) => {
+        if (req.body.request_id === undefined) {
+            res.json({});
+        }
+        const ret = await getRecommendedRequestByStudent(req.body.request_id);
+
+        res.json(ret);
+    }) as APISpec.RecommendAPISpec["/requests"]["post"]["__handler"],
+);
+
 
 export default RecommendRouter;
