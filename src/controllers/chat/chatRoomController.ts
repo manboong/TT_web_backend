@@ -78,3 +78,9 @@ export const delChatRoomsByRequest = async (request: RequestAttributes) => {
         { $set: { request_id: -1 * request.request_id } },
     );
 };
+
+export const delChatRoom = async (chatRoomId: string) => {
+    await ChatRoom.updateOne({ _id: chatRoomId });
+};
+
+export const leaveChatRoom = async (chatRoomId: string, userId: string) => {};

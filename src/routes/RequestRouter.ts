@@ -13,7 +13,7 @@ RequestRouter.post("/" satisfies keyof APISpec.RequestAPISpec, (async (
 ) => {
     const user = res.session?.user ?? undefined;
 
-    const data = req.body.data;
+    const { data, role } = req.body;
 
     if (user === undefined) {
         res.json("Login first");

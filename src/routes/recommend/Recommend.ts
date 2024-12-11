@@ -11,7 +11,7 @@ RecommendRouter.post(
         logger.info("recommend router of student");
 
         const result = await getRecommendedStudentByRequest(
-            req.body.student_id,
+            req.body.request_id,
         );
 
         const ret = result.getOrNull();
@@ -23,12 +23,14 @@ RecommendRouter.post(
 RecommendRouter.post(
     "/requests" satisfies keyof APISpec.RecommendAPISpec,
     (async (req, res) => {
-        if (req.body.request_id === undefined) {
+        if (req.body.student_id === undefined) {
             res.json({});
+            return;
         }
-        const ret = await getRecommendedRequestByStudent(req.body.request_id);
+        const ret = await getRecommendedRequestByStudent(req.body.student_id);
 
         res.json(ret);
+        return;
     }) as APISpec.RecommendAPISpec["/requests"]["post"]["__handler"],
 );
 
