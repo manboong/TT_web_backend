@@ -145,6 +145,16 @@ module.exports = {
                     */
                     },
                 ]);
+                client.index("school-name-jp").addDocuments({
+                    school_id: i,
+                    school_name: jp,
+                    school_name_glb: {
+                        kr: kr,
+                        jp: jp,
+                        en: en,
+                    },
+                    country_code: "jp",
+                });
             } catch (error) {
                 console.log(
                     "Validation Error in School.bulkcreate",

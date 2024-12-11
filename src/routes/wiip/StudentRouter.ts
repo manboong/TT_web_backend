@@ -5,6 +5,7 @@ import {
     createUnVerifiedStudentIdentity,
 } from "../../controllers/wiip/StudentController";
 import { fullstudentprofile } from "../../models/rdbms/fullstudentprofile";
+import logger from "../../utils/logger";
 
 const StudentRouter = express.Router();
 
@@ -51,9 +52,10 @@ StudentRouter.get("/:student_id", async (req: Request, res: Response) => {
     }
 
     ret.profile = studentFullProfile.get({ plain: true });
-
     if (roles !== null && (roles.includes("corp") || roles.includes("orgn"))) {
-        ret.review = getInstReviewOfStudentByStudentId(Number(student_id));
+        ret.review = await getInstReviewOfStudentByStudentId(
+            Number(student_id),
+        );
     }
 
     res.json(ret);

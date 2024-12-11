@@ -6,9 +6,9 @@ import { createServer } from "http";
 import { ExpressAuth } from "@auth/express";
 import { authConfig } from "./config/auth.config";
 import { currentSession } from "./middleware/auth.middleware";
-import RequestRouter from "./routes/RequestRouter";
-import StudentRouter from "./routes/StudentRouter";
-import SchoolRouter from "./routes/wiip/SchoolRouter";
+import RequestRouter from "./routes/wiip/RequestRouter";
+import StudentRouter from "./routes/wiip/StudentRouter";
+import SchoolSearchRouter from "./routes/search/SchoolSearchRouter";
 import StudentReviewRouter from "./routes/wiip/StudentReviewRouter";
 import CorporationRouter from "./routes/wiip/CorporationRouter";
 import CorporationReviewRouter from "./routes/wiip/CorporationReviewRouter";
@@ -77,7 +77,7 @@ const initServer = async () => {
      */
     app.use("/api/requests", RequestRouter);
     app.use("/api/students", StudentRouter);
-    app.use("/api/schools", SchoolRouter);
+    app.use("/api/search/schools", SchoolSearchRouter);
     app.use("/api/student-reviews", StudentReviewRouter);
     app.use("/api/corporations", CorporationRouter);
     app.use("/api/corporation-reviews", CorporationReviewRouter);
