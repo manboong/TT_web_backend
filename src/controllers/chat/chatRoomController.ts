@@ -1,45 +1,55 @@
 import * as ChatModels from "../../models/chat";
-import type { UserAttributes } from "../../models/User";
-import type { RequestAttributes } from "../../models/Request";
+import type { UserAttributes } from "../../models/rdbms/User";
+import type { RequestAttributes } from "../../models/rdbms/Request";
 
-const { ChatRoom, ChatUser, Unread } = ChatModels;
+import logger from "../../utils/logger";
+
+const { ChatRoom, ChatUser, Unread, ChatContent } = ChatModels;
 
 export const createChatRoom = async (
-    request_id: number,
+    request: RequestAttributes,
     consumer: UserAttributes,
     participants: UserAttributes[],
 ) => {
-    // TODO: should be transactional
-    const uuidList = participants.map((user) => user.user_id);
+    try {
+        const chatRoomInstance = await ChatRoom.create({
+            request_id: request.request_id,
+            consumer_id: consumer.user_id,
+            participant_ids: participants.map((u) => u.user_id),
+        });
 
-    const chatParticipants = await ChatUser.find({
-        user_id: { $in: uuidList },
-    });
-    const chatConsumer = await ChatUser.findOne({ user_id: consumer.user_id });
-    const chatRoomInstance = await ChatRoom.create({
-        request_id: request_id,
-        consumer_id: chatConsumer.user_id,
-        participant_ids: chatParticipants.map((u) => u.user_id),
-    });
+        const res = await Promise.all(
+            participants.map(async (parti) => {
+                await Unread.create({
+                    chatroom: chatRoomInstance,
+                    user_id: parti.user_id,
+                });
+            }),
+        );
 
-    const res = await Promise.all(
-        chatParticipants.map(async (parti) => {
-            await Unread.create({
-                chatroom: chatRoomInstance,
-                user_id: parti.user_id,
-            });
-        }),
-    );
-
-    return chatRoomInstance;
+        const chatContent = await ChatContent.create({
+            chatroom: chatRoomInstance,
+            seq: 0,
+            content_type: "alert",
+            content: "방이 생성되었어요",
+            sender_id: null,
+            image_url: "",
+        });
+        return chatRoomInstance;
+    } catch (e) {
+        logger.warn(`Failed chatroom created ${e}`);
+        throw new Error("Create room failed");
+    } finally {
+        logger.info("ChatRoom created");
+    }
 };
 
 export const getChatRoomById = async (objectId: string) => {
     return await ChatRoom.findById(objectId);
 };
 
-export const getChatRoomsByRequest = async (request: RequestAttributes) => {
-    return await ChatRoom.find({ request_id: request.request_id });
+export const getChatRoomsByRequestId = async (requestId: number) => {
+    return await ChatRoom.find({ request_id: requestId });
 };
 
 export const getAllChatRoomsByUser = async (user: UserAttributes) => {

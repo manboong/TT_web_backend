@@ -2,8 +2,12 @@
  * Router regarding chattings.
  * such as, unread message count and information about current chatrooms
  */
+import { models } from "../../models/rdbms";
+import { createChatRoom } from "../../controllers/chat/chatRoomController";
+import { getUserByConsumerId } from "../../controllers/UserController";
 import { Router } from "express";
 import { getUnreadCountOfUser } from "../../controllers/chat/chatUnreadController";
+import { model } from "mongoose";
 const ChatRouter = Router();
 
 ChatRouter.post("/unread", async (req, res) => {
@@ -13,6 +17,54 @@ ChatRouter.post("/unread", async (req, res) => {
     const ret = await getUnreadCountOfUser(sessionUser.id);
 
     res.json({ unreadCount: ret });
+});
+
+ChatRouter.post("/chatroom", async (req, res) => {
+    const { request_id } = req.body;
+    const sessionUser = res.session.user;
+
+    if (sessionUser === undefined) {
+        res.json({ response: "No session" });
+        return;
+    } else if (!sessionUser.roles.includes("student")) {
+        res.json({ response: "No student user" });
+        return;
+    }
+
+    const userInstance = (
+        await models.User.findOne({
+            where: { user_id: sessionUser.id },
+        })
+    )?.get({ plain: true });
+
+    const reqeustInstance = (
+        await models.Request.findOne({
+            where: { request_id: request_id },
+            include: {},
+        })
+    )?.get({ plain: true });
+
+    if (userInstance === undefined || reqeustInstance === undefined) {
+        res.json({ response: "Db error" });
+        return;
+    }
+
+    const consumerInstance = await getUserByConsumerId(
+        reqeustInstance.consumer_id,
+    );
+
+    if (consumerInstance === undefined) {
+        res.json({ response: "Db error" });
+        return;
+    }
+
+    const chatRoom = await createChatRoom(reqeustInstance, consumerInstance, [
+        consumerInstance,
+        userInstance,
+    ]);
+
+    res.json({ response: "ok" });
+    return;
 });
 
 ChatRouter.post("/chatRooms", async (req, res, next) => {

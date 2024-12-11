@@ -41,6 +41,10 @@ const initServer = async () => {
     const app = express();
     const PORT = process.env.PORT || 8080;
     process.env.NODE_ENV = "production";
+
+    /**
+     * Middlewares
+     */
     app.set("port", PORT);
     app.use(cors({ origin: true, credentials: true }));
     app.use(bodyParser.urlencoded({ extended: true }));
@@ -55,6 +59,7 @@ const initServer = async () => {
             }),
         }),
     );
+
     sequelize
         .sync({ force: false })
         .then(() => {

@@ -1,6 +1,8 @@
 import { models } from "./models/rdbms";
 import { chatController } from "./controllers/chat";
 import { ChatUser } from "./models/chat";
+import { Request } from "./models/rdbms/Request";
+import logger from "./utils/logger";
 export const chatTest = async () => {
     const userModel = models.User;
     const { chatRoomController, chatContentController, chatUserController } =
@@ -27,21 +29,31 @@ export const chatTest = async () => {
     )[0];
 
     const chatUsers = await chatUserController.getUsers(dataValues);
+    const requests = await Request.findAll();
 
-    await chatRoomController.createChatRoom(1, test0, [
+    await chatRoomController.createChatRoom(
+        requests[0].get({ plain: true }),
         test0,
+        [test0, test1, student1, student2],
+    );
+    await chatRoomController.createChatRoom(
+        requests[0].get({ plain: true }),
+        test0,
+        [test0, test1, student1],
+    );
+    await chatRoomController.createChatRoom(
+        requests[0].get({ plain: true }),
         test1,
-        student1,
-        student2,
-    ]);
-    await chatRoomController.createChatRoom(1, test0, [test0, test1, student1]);
-    await chatRoomController.createChatRoom(2, test1, [student1, student2]);
+        [student1, student2],
+    );
 
-    await chatRoomController.createChatRoom(2, test1, [test0, test1, student1]);
+    await chatRoomController.createChatRoom(
+        requests[0].get({ plain: true }),
+        test1,
+        [test0, test1, student1],
+    );
 
-    const chatRooms = await chatRoomController.getChatRoomsByRequest({
-        request_id: 1,
-    });
+    const chatRooms = await chatRoomController.getChatRoomsByRequestId(1);
 
     const chatRoom = chatRooms[0];
 

@@ -170,6 +170,14 @@ if (process.env.NODE_ENV === "production") {
             new winston.transports.Console({
                 format: combinedFormats,
             }),
+            new WinstonDaily({
+                level: "error",
+                datePattern: "YYYY-MM-DD",
+                dirname: path.join(process.cwd(), "devLogs"),
+                filename: `%DATE%.errors.log`,
+                maxFiles: 30, // 최대 30일치
+                zippedArchive: true,
+            }),
         ],
         exceptionHandlers: [
             new winston.transports.Console({
