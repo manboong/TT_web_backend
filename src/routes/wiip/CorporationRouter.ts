@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
-import { Consumer } from "../models/rdbms/Consumer";
-import { Corporation } from "../models/rdbms/Corporation";
-import * as CorpController from "../global/corpInfo/kr/CorpInfoController";
+import { Consumer } from "../../models/rdbms/Consumer";
+import { Corporation } from "../../models/rdbms/Corporation";
+import * as CorpController from "../../global/corpInfo/kr/CorpInfoController";
 
 const CorporationRouter = express.Router();
 

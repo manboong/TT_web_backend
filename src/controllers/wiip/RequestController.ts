@@ -53,6 +53,7 @@ export const createRequest = async (
 ) => {
     try {
         const ret = await sequelize.transaction(async (t) => {
+            logger.info("Start: Transaction-[Create Request]");
             const consumerIdentity = (
                 await ConsumerModel.findOne({
                     where: {
@@ -98,10 +99,10 @@ export const createRequest = async (
                     "No record created! " + JSON.stringify(searchTask),
                 );
             }
-
+            logger.info("Request has been added to Search Engine");
             return createdRequest.request_id;
         });
-
+        logger.info("End: Transaction-[Create request]");
         return ret;
     } catch (error) {
         // transaction failed

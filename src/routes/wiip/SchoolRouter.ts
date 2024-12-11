@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { School } from "../models/rdbms/School";
+import { School } from "../../models/rdbms/School";
 
 const SchoolRouter = express.Router();
 

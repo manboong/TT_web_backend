@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
-import { StudentReview } from "../models/rdbms/StudentReview";
-import { Request as RequestModel } from "../models/rdbms/Request";
-import { Consumer } from "../models/rdbms/Consumer";
+import { StudentReview } from "../../models/rdbms/StudentReview";
+import { Request as RequestModel } from "../../models/rdbms/Request";
+import { Consumer } from "../../models/rdbms/Consumer";
 
 const StudentReviewRouter = express.Router();
 
@@ -61,7 +61,7 @@ StudentReviewRouter.post("/", async (req: Request, res: Response) => {
 
         res.status(201).json({ success: true, review: createdReview });
     } catch (error) {
-        console.error(`Error creating student review: Error: ${error}`);
+        console.error("Error creating student review:", error);
         res.status(500).json({ error: "Failed to create student review" });
     }
 });

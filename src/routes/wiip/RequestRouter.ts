@@ -3,7 +3,7 @@ import { APISpec } from "api_spec";
 import {
     createRequest,
     getRequestByRequestId,
-} from "../controllers/wiip/RequestController";
+} from "../../controllers/wiip/RequestController";
 
 const RequestRouter = express.Router();
 

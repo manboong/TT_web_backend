@@ -8,13 +8,10 @@ import { authConfig } from "./config/auth.config";
 import { currentSession } from "./middleware/auth.middleware";
 import RequestRouter from "./routes/RequestRouter";
 import StudentRouter from "./routes/StudentRouter";
-import SchoolRouter from "./routes/SchoolRouter";
-import ConsumerRouter from "./routes/ConsumerRouter";
-import StudentReviewRouter from "./routes/StudentReviewRouter";
-import AcademicHistoryRouter from "./routes/AcademicHistoryRouter";
-import ExamHistoryRouter from "./routes/LanguageHistory";
-import CorporationRouter from "./routes/CorporationRouter";
-import CorporationReviewRouter from "./routes/CorporationReviewRouter";
+import SchoolRouter from "./routes/wiip/SchoolRouter";
+import StudentReviewRouter from "./routes/wiip/StudentReviewRouter";
+import CorporationRouter from "./routes/wiip/CorporationRouter";
+import CorporationReviewRouter from "./routes/wiip/CorporationReviewRouter";
 import RecommendRouter from "./routes/recommend/Recommend";
 import VerificationRouter from "./routes/VerificationRouter";
 import ChatRouter from "./routes/chat/chatRouter";
@@ -81,10 +78,7 @@ const initServer = async () => {
     app.use("/api/requests", RequestRouter);
     app.use("/api/students", StudentRouter);
     app.use("/api/schools", SchoolRouter);
-    app.use("/api/consumers", ConsumerRouter);
     app.use("/api/student-reviews", StudentReviewRouter);
-    app.use("/api/academic-histories", AcademicHistoryRouter);
-    app.use("/api/exam-histories", ExamHistoryRouter);
     app.use("/api/corporations", CorporationRouter);
     app.use("/api/corporation-reviews", CorporationReviewRouter);
 
